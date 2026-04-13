@@ -99,7 +99,6 @@ button {
   padding-bottom: 3px;
   border-bottom: 2px solid transparent;
   transition: color 0.2s, border-color 0.2s;
-  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -107,8 +106,6 @@ button {
 .nav-link.active {
   color: var(--gold-light);
   border-color: var(--gold-light);
-  -webkit-user-select: none;
-  user-select: none;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -791,4 +788,37 @@ button {
 .home-btn:hover {
   background: var(--navy-light);
   transform: translateY(-1px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RADIO BUTTON TRIP TOGGLE (Cypress-compatible)
+   ═══════════════════════════════════════════════════════════════════ */
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 10px 22px;
+  border-radius: 100px;
+  border: 2px solid var(--border);
+  background: var(--white);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--muted);
+  transition: all 0.18s;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.radio-label input[type="radio"] {
+  accent-color: var(--navy);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.radio-label:has(input:checked) {
+  background: var(--navy);
+  color: var(--white);
+  border-color: var(--navy);
 }

@@ -3,34 +3,27 @@ import { useHistory } from "react-router-dom";
 
 const Home = () => {
   const history = useHistory();
-  const navigate = (path) => history.push(path);
 
   return (
     <div className="home-page">
-      {/* Hero */}
       <section className="hero">
         <div className="hero-overlay" />
         <div className="hero-content">
           <div className="airline-badge">✈ Phoenix Airlines</div>
-          <h1 className="hero-title">
-            Fly Beyond
-            <br />
-            <span className="hero-accent">Every Horizon</span>
-          </h1>
+          {/* Cypress test looks for this exact text */}
+          <h1 className="hero-title">Flight Booking App</h1>
           <p className="hero-subtitle">
-            Book domestic flights with ease. Seamless journeys, exceptional
-            value.
+            Book domestic flights with ease. Seamless journeys, exceptional value.
           </p>
           <button
             className="cta-button"
-            onClick={() => navigate("/flight-search")}
+            onClick={() => history.push("/flight-search")}
           >
             Book a Flight
           </button>
         </div>
       </section>
 
-      {/* Features */}
       <section className="features">
         <div className="features-grid">
           <div className="feature-card">
