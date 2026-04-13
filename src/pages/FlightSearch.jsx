@@ -33,8 +33,13 @@ const FlightSearch = () => {
     const newErrors = {};
     if (!source.trim()) newErrors.source = "Please enter a source city.";
     if (!destination.trim()) newErrors.destination = "Please enter a destination city.";
-    if (source.trim() && destination.trim() && source.trim().toLowerCase() === destination.trim().toLowerCase())
+    if (
+      source.trim() &&
+      destination.trim() &&
+      source.trim().toLowerCase() === destination.trim().toLowerCase()
+    ) {
       newErrors.destination = "Source and destination cannot be the same.";
+    }
     if (!departureDate) newErrors.departureDate = "Please select a departure date.";
     if (tripType === "round-trip") {
       if (!returnDate) newErrors.returnDate = "Please select a return date.";
@@ -44,7 +49,6 @@ const FlightSearch = () => {
     return newErrors;
   };
 
-  // ─── Handlers ────────────────────────────────────────────────────
   const handleSearch = (e) => {
     e.preventDefault();
     const validationErrors = validate();
@@ -70,7 +74,7 @@ const FlightSearch = () => {
       <div className="search-container">
         <h2 className="page-title">Search Flights</h2>
 
-        {/* Trip Type — radio inputs required by Cypress tests */}
+        {/* Trip Type — radio inputs required by Cypress */}
         <div className="trip-toggle">
           <label className="radio-label">
             <input
@@ -97,7 +101,6 @@ const FlightSearch = () => {
         {/* Search Form */}
         <form className="search-form" onSubmit={handleSearch} noValidate>
           <div className="form-row">
-            {/* Source — text input required by Cypress tests */}
             <div className="form-group">
               <label htmlFor="source">From</label>
               <input
@@ -111,12 +114,9 @@ const FlightSearch = () => {
                 }}
                 className={errors.source ? "input-error" : ""}
               />
-              {errors.source && (
-                <span className="error-msg">{errors.source}</span>
-              )}
+              {errors.source && <span className="error-msg">{errors.source}</span>}
             </div>
 
-            {/* Destination — text input required by Cypress tests */}
             <div className="form-group">
               <label htmlFor="destination">To</label>
               <input
@@ -130,14 +130,11 @@ const FlightSearch = () => {
                 }}
                 className={errors.destination ? "input-error" : ""}
               />
-              {errors.destination && (
-                <span className="error-msg">{errors.destination}</span>
-              )}
+              {errors.destination && <span className="error-msg">{errors.destination}</span>}
             </div>
           </div>
 
           <div className="form-row">
-            {/* Departure Date */}
             <div className="form-group">
               <label htmlFor="departureDate">Departure Date</label>
               <input
@@ -151,12 +148,9 @@ const FlightSearch = () => {
                 }}
                 className={errors.departureDate ? "input-error" : ""}
               />
-              {errors.departureDate && (
-                <span className="error-msg">{errors.departureDate}</span>
-              )}
+              {errors.departureDate && <span className="error-msg">{errors.departureDate}</span>}
             </div>
 
-            {/* Return Date — only shown for round-trip */}
             {tripType === "round-trip" && (
               <div className="form-group">
                 <label htmlFor="returnDate">Return Date</label>
@@ -171,9 +165,7 @@ const FlightSearch = () => {
                   }}
                   className={errors.returnDate ? "input-error" : ""}
                 />
-                {errors.returnDate && (
-                  <span className="error-msg">{errors.returnDate}</span>
-                )}
+                {errors.returnDate && <span className="error-msg">{errors.returnDate}</span>}
               </div>
             )}
           </div>
@@ -183,43 +175,41 @@ const FlightSearch = () => {
           </button>
         </form>
 
-        {/* Results */}
+        {/* Results — Cypress expects <ul> with <li> items */}
         {searched && (
           <div className="results-section">
-            <h3 className="results-title">
-              {searchResults.length > 0
-                ? `${searchResults.length} Flight${searchResults.length > 1 ? "s" : ""} Found`
-                : "No flights found for this route."}
-            </h3>
-
-            <div className="flights-list">
-              {searchResults.map((flight) => (
-                <div key={flight.id} className="flight-card">
-                  <div className="flight-info">
-                    <div className="flight-route">
-                      <span className="city">{flight.source}</span>
-                      <span className="flight-arrow">✈</span>
-                      <span className="city">{flight.destination}</span>
+            {searchResults.length === 0 ? (
+              <p className="no-results">No flights found for this route.</p>
+            ) : (
+              <ul className="flights-list">
+                {searchResults.map((flight) => (
+                  <li key={flight.id} className="flight-card">
+                    <div className="flight-info">
+                      <div className="flight-route">
+                        <span className="city">{flight.source}</span>
+                        <span className="flight-arrow"> ✈ </span>
+                        <span className="city">{flight.destination}</span>
+                      </div>
+                      <div className="flight-meta">
+                        <span>{flight.flightNumber}</span>
+                        <span>{flight.departure} → {flight.arrival}</span>
+                        <span>{flight.duration}</span>
+                        <span className="seats-left">{flight.seats} seats left</span>
+                      </div>
                     </div>
-                    <div className="flight-meta">
-                      <span>{flight.flightNumber}</span>
-                      <span>{flight.departure} → {flight.arrival}</span>
-                      <span>{flight.duration}</span>
-                      <span className="seats-left">{flight.seats} seats left</span>
+                    <div className="flight-price-block">
+                      <span className="price">₹{flight.price.toLocaleString("en-IN")}</span>
+                      <button
+                        className="book-flight"
+                        onClick={() => handleBookFlight(flight)}
+                      >
+                        Book Now
+                      </button>
                     </div>
-                  </div>
-                  <div className="flight-price-block">
-                    <span className="price">₹{flight.price.toLocaleString("en-IN")}</span>
-                    <button
-                      className="book-flight"
-                      onClick={() => handleBookFlight(flight)}
-                    >
-                      Book Now
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
       </div>

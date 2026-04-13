@@ -6,12 +6,10 @@ const Home = () => {
 
   return (
     <div className="home-page">
-      <section className="hero">
-        <div className="hero-overlay" />
+      <div className="hero">
         <div className="hero-content">
-          <div className="airline-badge">✈ Phoenix Airlines</div>
-          {/* Cypress test looks for this exact text */}
-          <h1 className="hero-title">Flight Booking App</h1>
+          {/* Cypress test looks for this exact string */}
+          <h1>Welcome to Flight Booking App</h1>
           <p className="hero-subtitle">
             Book domestic flights with ease. Seamless journeys, exceptional value.
           </p>
@@ -22,9 +20,9 @@ const Home = () => {
             Book a Flight
           </button>
         </div>
-      </section>
+      </div>
 
-      <section className="features">
+      <div className="features">
         <div className="features-grid">
           <div className="feature-card">
             <span className="feature-icon">🛫</span>
@@ -42,7 +40,7 @@ const Home = () => {
             <p>Your data is always protected.</p>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 };

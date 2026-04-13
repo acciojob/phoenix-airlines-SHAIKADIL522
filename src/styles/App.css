@@ -416,6 +416,9 @@ button {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .flight-card {
@@ -822,3 +825,4 @@ button {
   color: var(--white);
   border-color: var(--navy);
 }
+
