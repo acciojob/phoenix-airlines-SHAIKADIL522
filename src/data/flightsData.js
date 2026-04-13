@@ -115,9 +115,7 @@ export function searchFlights(source, destination) {
   const src = normalise(source);
   const dst = normalise(destination);
 
-  const filtered = FLIGHTS.filter(
+  return FLIGHTS.filter(
     (f) => normalise(f.source) === src && normalise(f.destination) === dst
   );
-
-  return filtered.length > 0 ? filtered : FLIGHTS;
 }
