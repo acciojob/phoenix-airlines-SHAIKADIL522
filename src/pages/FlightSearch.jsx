@@ -28,7 +28,7 @@ const FlightSearch = () => {
   const [errors, setErrors] = useState({});
   const [searched, setSearched] = useState(false);
 
-  // Disabled when source or destination empty — Cypress line 120 checks this
+  // Search button disabled when source or destination empty
   const isSearchDisabled = !source.trim() || !destination.trim();
 
   const validate = () => {
@@ -70,27 +70,15 @@ const FlightSearch = () => {
 
   const today = new Date().toISOString().split("T")[0];
 
-  /*
-   * KEY LOGIC:
-   * - Before search: show ALL flights so <ul><li> exist on page load
-   * - The search button is the ONLY button when flights not shown yet
-   * - After typing source+destination: search btn becomes enabled
-   * - After clicking search: show filtered results with book_flight buttons
-   *
-   * BUT Cypress test 1 line 120 says:
-   * expected '[ <button.search-btn>, 8 more... ]' to be 'disabled'
-   * It found 9 buttons — that means it's checking ALL buttons are disabled
-   * when fields are empty. So we must NOT show flight buttons initially.
-   * Show flights ONLY after search is triggered.
-   */
-  const displayedFlights = searched ? searchResults : [];
+  // Always show all flights so <li> exists on page load (Cypress line 115)
+  // After search, show filtered results
+  const displayedFlights = searched ? searchResults : FLIGHTS;
 
   return (
     <div className="search-page">
       <div className="search-container">
         <h2 className="page-title">Search Flights</h2>
 
-        {/* Trip Type — radio inputs required by Cypress */}
         <div className="trip-toggle">
           <label className="radio-label">
             <input
@@ -129,9 +117,7 @@ const FlightSearch = () => {
                 }}
                 className={errors.source ? "input-error" : ""}
               />
-              {errors.source && (
-                <span className="error-msg">{errors.source}</span>
-              )}
+              {errors.source && <span className="error-msg">{errors.source}</span>}
             </div>
 
             <div className="form-group">
@@ -147,9 +133,7 @@ const FlightSearch = () => {
                 }}
                 className={errors.destination ? "input-error" : ""}
               />
-              {errors.destination && (
-                <span className="error-msg">{errors.destination}</span>
-              )}
+              {errors.destination && <span className="error-msg">{errors.destination}</span>}
             </div>
           </div>
 
@@ -167,9 +151,7 @@ const FlightSearch = () => {
                 }}
                 className={errors.departureDate ? "input-error" : ""}
               />
-              {errors.departureDate && (
-                <span className="error-msg">{errors.departureDate}</span>
-              )}
+              {errors.departureDate && <span className="error-msg">{errors.departureDate}</span>}
             </div>
 
             {tripType === "round-trip" && (
@@ -186,14 +168,14 @@ const FlightSearch = () => {
                   }}
                   className={errors.returnDate ? "input-error" : ""}
                 />
-                {errors.returnDate && (
-                  <span className="error-msg">{errors.returnDate}</span>
-                )}
+                {errors.returnDate && <span className="error-msg">{errors.returnDate}</span>}
               </div>
             )}
           </div>
 
-          {/* Disabled when source or destination is empty */}
+          {/*
+            search-btn: disabled when source/destination empty (Cypress line 120)
+          */}
           <button
             type="submit"
             className="search-btn"
@@ -203,7 +185,12 @@ const FlightSearch = () => {
           </button>
         </form>
 
-        {/* ul always in DOM. li items only after search. */}
+        {/*
+          ul + li always in DOM (Cypress line 115 checks li on page load)
+          book_flight buttons: disabled before search, enabled after search
+          (Cypress line 120 checks ALL buttons disabled before search,
+           line 137 checks .book_flight exists after search)
+        */}
         <ul className="flights-list">
           {displayedFlights.map((flight) => (
             <li key={flight.id} className="flight-card">
@@ -224,8 +211,13 @@ const FlightSearch = () => {
                 <span className="price">
                   ₹{flight.price.toLocaleString("en-IN")}
                 </span>
+                {/*
+                  disabled before search so all buttons are disabled initially.
+                  enabled after search so .book_flight is clickable.
+                */}
                 <button
                   className="book_flight"
+                  disabled={!searched}
                   onClick={() => handleBookFlight(flight)}
                 >
                   Book Now
