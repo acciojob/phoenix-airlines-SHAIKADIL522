@@ -204,7 +204,7 @@ const FlightBooking = () => {
           </div>
 
           <button type="submit" className="confirm-btn">
-            Confirm Booking
+            Confirm Booking (1)
           </button>
         </form>
       </div>

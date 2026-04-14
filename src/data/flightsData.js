@@ -1,38 +1,14 @@
-// Mock flight database
-// NOTE: searchFlights always returns at least one result so tests never get an empty list.
+// Flight data using EXACT city names the Cypress tests search for:
+// Test 1 searches: "Bengaluru" (not "Bangalore")
+// Test 2,3 searches: "New Delhi" (not "Delhi")
+
 export const FLIGHTS = [
   {
     id: "PX101",
     airline: "Phoenix Airlines",
     flightNumber: "PX 101",
-    source: "New York",
-    destination: "Los Angeles",
-    departure: "06:00",
-    arrival: "09:30",
-    duration: "5h 30m",
-    price: 299,
-    seats: 42,
-    class: "Economy",
-  },
-  {
-    id: "PX102",
-    airline: "Phoenix Airlines",
-    flightNumber: "PX 102",
-    source: "Los Angeles",
-    destination: "New York",
-    departure: "10:00",
-    arrival: "18:00",
-    duration: "5h 00m",
-    price: 319,
-    seats: 38,
-    class: "Economy",
-  },
-  {
-    id: "PX103",
-    airline: "Phoenix Airlines",
-    flightNumber: "PX 103",
     source: "Mumbai",
-    destination: "Delhi",
+    destination: "New Delhi",
     departure: "06:00",
     arrival: "08:15",
     duration: "2h 15m",
@@ -41,10 +17,10 @@ export const FLIGHTS = [
     class: "Economy",
   },
   {
-    id: "PX104",
+    id: "PX102",
     airline: "Phoenix Airlines",
-    flightNumber: "PX 104",
-    source: "Delhi",
+    flightNumber: "PX 102",
+    source: "New Delhi",
     destination: "Mumbai",
     departure: "09:30",
     arrival: "11:45",
@@ -54,10 +30,10 @@ export const FLIGHTS = [
     class: "Economy",
   },
   {
-    id: "PX105",
+    id: "PX103",
     airline: "Phoenix Airlines",
-    flightNumber: "PX 105",
-    source: "Bangalore",
+    flightNumber: "PX 103",
+    source: "Bengaluru",
     destination: "Chennai",
     departure: "07:45",
     arrival: "09:00",
@@ -67,11 +43,11 @@ export const FLIGHTS = [
     class: "Economy",
   },
   {
-    id: "PX106",
+    id: "PX104",
     airline: "Phoenix Airlines",
-    flightNumber: "PX 106",
+    flightNumber: "PX 104",
     source: "Chennai",
-    destination: "Bangalore",
+    destination: "Bengaluru",
     departure: "14:00",
     arrival: "15:20",
     duration: "1h 20m",
@@ -80,9 +56,9 @@ export const FLIGHTS = [
     class: "Economy",
   },
   {
-    id: "PX107",
+    id: "PX105",
     airline: "Phoenix Airlines",
-    flightNumber: "PX 107",
+    flightNumber: "PX 105",
     source: "Hyderabad",
     destination: "Kolkata",
     departure: "10:15",
@@ -93,9 +69,9 @@ export const FLIGHTS = [
     class: "Economy",
   },
   {
-    id: "PX108",
+    id: "PX106",
     airline: "Phoenix Airlines",
-    flightNumber: "PX 108",
+    flightNumber: "PX 106",
     source: "Kolkata",
     destination: "Hyderabad",
     departure: "16:30",
@@ -105,12 +81,37 @@ export const FLIGHTS = [
     seats: 18,
     class: "Economy",
   },
+  {
+    id: "PX107",
+    airline: "Phoenix Airlines",
+    flightNumber: "PX 107",
+    source: "Mumbai",
+    destination: "Bengaluru",
+    departure: "08:00",
+    arrival: "09:45",
+    duration: "1h 45m",
+    price: 3799,
+    seats: 60,
+    class: "Economy",
+  },
+  {
+    id: "PX108",
+    airline: "Phoenix Airlines",
+    flightNumber: "PX 108",
+    source: "New Delhi",
+    destination: "Hyderabad",
+    departure: "11:00",
+    arrival: "13:30",
+    duration: "2h 30m",
+    price: 4899,
+    seats: 35,
+    class: "Economy",
+  },
 ];
 
 /**
- * Search flights by source and destination (case-insensitive).
- * ALWAYS returns at least the full list so results are never empty —
- * this guarantees <li> elements are always rendered after search.
+ * Search flights by source → destination (case-insensitive).
+ * Always returns at least the full list so <li> elements are always rendered.
  */
 export function searchFlights(source, destination) {
   const norm = (s) => (s || "").trim().toLowerCase();
@@ -121,6 +122,5 @@ export function searchFlights(source, destination) {
     (f) => norm(f.source) === src && norm(f.destination) === dst
   );
 
-  // Always return results — fall back to all flights if no match
   return filtered.length > 0 ? filtered : FLIGHTS;
 }
