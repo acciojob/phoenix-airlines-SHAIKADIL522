@@ -111,16 +111,14 @@ export const FLIGHTS = [
 
 /**
  * Search flights by source → destination (case-insensitive).
- * Always returns at least the full list so <li> elements are always rendered.
+ * Returns only matching routes.
  */
 export function searchFlights(source, destination) {
   const norm = (s) => (s || "").trim().toLowerCase();
   const src = norm(source);
   const dst = norm(destination);
 
-  const filtered = FLIGHTS.filter(
+  return FLIGHTS.filter(
     (f) => norm(f.source) === src && norm(f.destination) === dst
   );
-
-  return filtered.length > 0 ? filtered : FLIGHTS;
 }
