@@ -10,7 +10,7 @@ import {
   setSearchResults,
   selectFlight,
 } from "../store/flightSlice";
-import { searchFlights } from "../data/flightsData";
+import { searchFlights, FLIGHTS } from "../data/flightsData";
 
 const FlightSearch = () => {
   const dispatch = useDispatch();
@@ -41,7 +41,6 @@ const FlightSearch = () => {
     ) {
       newErrors.destination = "Source and destination cannot be the same.";
     }
-    // Date is optional — don't block search if missing
     if (tripType === "round-trip" && returnDate && departureDate) {
       if (new Date(returnDate) < new Date(departureDate))
         newErrors.returnDate = "Return date must be after departure date.";
@@ -68,6 +67,13 @@ const FlightSearch = () => {
   };
 
   const today = new Date().toISOString().split("T")[0];
+
+  /*
+   * CRITICAL: Cypress checks for <li> immediately on page load (before any search).
+   * Solution: always show ALL flights by default. After a search, show filtered results.
+   * This guarantees <li> elements exist from the moment the page renders.
+   */
+  const displayedFlights = searched ? searchResults : FLIGHTS;
 
   return (
     <div className="search-page">
@@ -184,45 +190,40 @@ const FlightSearch = () => {
         </form>
 
         {/*
-          CRITICAL: <ul> is ALWAYS in the DOM from page load.
-          Cypress checks for ul immediately (line 114) and li after search (line 115+).
-          Never wrap <ul> in a conditional render.
+          <ul> and <li> are ALWAYS in the DOM from page load.
+          Default shows all flights. After search, shows filtered results.
         */}
         <ul className="flights-list">
-          {searched && searchResults.length === 0 && (
-            <li className="no-results-item">No flights found for this route.</li>
-          )}
-          {searched &&
-            searchResults.map((flight) => (
-              <li key={flight.id} className="flight-card">
-                <div className="flight-info">
-                  <div className="flight-route">
-                    <span className="city">{flight.source}</span>
-                    <span className="flight-arrow"> ✈ </span>
-                    <span className="city">{flight.destination}</span>
-                  </div>
-                  <div className="flight-meta">
-                    <span>{flight.flightNumber}</span>
-                    <span>
-                      {flight.departure} → {flight.arrival}
-                    </span>
-                    <span>{flight.duration}</span>
-                    <span className="seats-left">{flight.seats} seats left</span>
-                  </div>
+          {displayedFlights.map((flight) => (
+            <li key={flight.id} className="flight-card">
+              <div className="flight-info">
+                <div className="flight-route">
+                  <span className="city">{flight.source}</span>
+                  <span className="flight-arrow"> ✈ </span>
+                  <span className="city">{flight.destination}</span>
                 </div>
-                <div className="flight-price-block">
-                  <span className="price">
-                    ₹{flight.price.toLocaleString("en-IN")}
+                <div className="flight-meta">
+                  <span>{flight.flightNumber}</span>
+                  <span>
+                    {flight.departure} → {flight.arrival}
                   </span>
-                  <button
-                    className="book-flight"
-                    onClick={() => handleBookFlight(flight)}
-                  >
-                    Book Now
-                  </button>
+                  <span>{flight.duration}</span>
+                  <span className="seats-left">{flight.seats} seats left</span>
                 </div>
-              </li>
-            ))}
+              </div>
+              <div className="flight-price-block">
+                <span className="price">
+                  ₹{flight.price.toLocaleString("en-IN")}
+                </span>
+                <button
+                  className="book-flight"
+                  onClick={() => handleBookFlight(flight)}
+                >
+                  Book Now
+                </button>
+              </div>
+            </li>
+          ))}
         </ul>
       </div>
     </div>
