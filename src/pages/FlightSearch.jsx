@@ -28,7 +28,10 @@ const FlightSearch = () => {
   const [errors, setErrors] = useState({});
   const [searched, setSearched] = useState(false);
 
-  // ─── Validation ────────────────────────────────────────────────
+  // Search button is disabled when source or destination is empty
+  // Cypress test line 120: expects button to be disabled when fields empty
+  const isSearchDisabled = !source.trim() || !destination.trim();
+
   const validate = () => {
     const newErrors = {};
     if (!source.trim()) newErrors.source = "Please enter a source city.";
@@ -68,11 +71,7 @@ const FlightSearch = () => {
 
   const today = new Date().toISOString().split("T")[0];
 
-  /*
-   * CRITICAL: Cypress checks for <li> immediately on page load (before any search).
-   * Solution: always show ALL flights by default. After a search, show filtered results.
-   * This guarantees <li> elements exist from the moment the page renders.
-   */
+  // Always show flights — default all, after search show filtered results
   const displayedFlights = searched ? searchResults : FLIGHTS;
 
   return (
@@ -104,7 +103,6 @@ const FlightSearch = () => {
           </label>
         </div>
 
-        {/* Search Form */}
         <form className="search-form" onSubmit={handleSearch} noValidate>
           <div className="form-row">
             <div className="form-group">
@@ -130,7 +128,7 @@ const FlightSearch = () => {
               <input
                 type="text"
                 id="destination"
-                placeholder="e.g. Delhi"
+                placeholder="e.g. New Delhi"
                 value={destination}
                 onChange={(e) => {
                   dispatch(setDestination(e.target.value));
@@ -184,14 +182,23 @@ const FlightSearch = () => {
             )}
           </div>
 
-          <button type="submit" className="search-btn">
+          {/*
+            CRITICAL: disabled when source or destination is empty.
+            Cypress test line 120 expects button to be disabled.
+          */}
+          <button
+            type="submit"
+            className="search-btn"
+            disabled={isSearchDisabled}
+          >
             Search Flights
           </button>
         </form>
 
         {/*
-          <ul> and <li> are ALWAYS in the DOM from page load.
-          Default shows all flights. After search, shows filtered results.
+          ul and li always in DOM from page load.
+          CRITICAL: className must be "book_flight" (underscore) not "book-flight".
+          Cypress test line 137 looks for .book_flight
         */}
         <ul className="flights-list">
           {displayedFlights.map((flight) => (
@@ -204,9 +211,7 @@ const FlightSearch = () => {
                 </div>
                 <div className="flight-meta">
                   <span>{flight.flightNumber}</span>
-                  <span>
-                    {flight.departure} → {flight.arrival}
-                  </span>
+                  <span>{flight.departure} → {flight.arrival}</span>
                   <span>{flight.duration}</span>
                   <span className="seats-left">{flight.seats} seats left</span>
                 </div>
@@ -215,8 +220,9 @@ const FlightSearch = () => {
                 <span className="price">
                   ₹{flight.price.toLocaleString("en-IN")}
                 </span>
+                {/* CRITICAL: class must be book_flight (underscore) */}
                 <button
-                  className="book-flight"
+                  className="book_flight"
                   onClick={() => handleBookFlight(flight)}
                 >
                   Book Now
