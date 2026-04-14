@@ -54,9 +54,7 @@ button {
    NAVBAR
    ═══════════════════════════════════════════════════════════════════ */
 .navbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  position: relative;
   background: var(--navy);
   display: flex;
   align-items: center;
@@ -825,4 +823,3 @@ button {
   color: var(--white);
   border-color: var(--navy);
 }
-
