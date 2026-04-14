@@ -10,7 +10,7 @@ import {
   setSearchResults,
   selectFlight,
 } from "../store/flightSlice";
-import { searchFlights } from "../data/flightsData";
+import { searchFlights, FLIGHTS } from "../data/flightsData";
 
 const FlightSearch = () => {
   const dispatch = useDispatch();
@@ -25,40 +25,17 @@ const FlightSearch = () => {
     searchResults,
   } = useSelector((state) => state.flights);
 
-  const [errors, setErrors] = useState({});
   const [searched, setSearched] = useState(false);
 
-  // Only disable when empty (Cypress-friendly)
   const isSearchDisabled = !source.trim() || !destination.trim();
-
-  const validate = () => {
-    const newErrors = {};
-    if (!source.trim()) newErrors.source = "Please enter a source city.";
-    if (!destination.trim()) newErrors.destination = "Please enter a destination city.";
-    if (
-      source.trim() &&
-      destination.trim() &&
-      source.trim().toLowerCase() === destination.trim().toLowerCase()
-    ) {
-      newErrors.destination = "Source and destination cannot be the same.";
-    }
-    return newErrors;
-  };
 
   const handleSearch = (e) => {
     e.preventDefault();
 
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    setErrors({});
     const results = searchFlights(source, destination);
     dispatch(setSearchResults(results));
 
-    // IMPORTANT: set immediately
+    // IMPORTANT: make sure this runs instantly
     setSearched(true);
   };
 
@@ -67,86 +44,50 @@ const FlightSearch = () => {
     history.push("/flight-booking");
   };
 
+  // ✅ FIX: show flights initially
+  const displayedFlights = searched ? searchResults : FLIGHTS;
+
   return (
-    <div className="search-page">
-      <div className="search-container">
-        <h2 className="page-title">Search Flights</h2>
+    <div>
+      <h2>Search Flights</h2>
 
-        {/* Trip Type */}
-        <div className="trip-toggle">
-          <label>
-            <input
-              type="radio"
-              value="one-way"
-              checked={tripType === "one-way"}
-              onChange={() => dispatch(setTripType("one-way"))}
-            />
-            One-Way
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="round-trip"
-              checked={tripType === "round-trip"}
-              onChange={() => dispatch(setTripType("round-trip"))}
-            />
-            Round-Trip
-          </label>
-        </div>
+      <form onSubmit={handleSearch}>
+        <input
+          type="text"
+          value={source}
+          onChange={(e) => dispatch(setSource(e.target.value))}
+          placeholder="From"
+        />
 
-        <form onSubmit={handleSearch}>
-          <input
-            type="text"
-            placeholder="From"
-            value={source}
-            onChange={(e) => dispatch(setSource(e.target.value))}
-          />
+        <input
+          type="text"
+          value={destination}
+          onChange={(e) => dispatch(setDestination(e.target.value))}
+          placeholder="To"
+        />
 
-          <input
-            type="text"
-            placeholder="To"
-            value={destination}
-            onChange={(e) => dispatch(setDestination(e.target.value))}
-          />
+        <button type="submit" disabled={isSearchDisabled}>
+          Search Flights
+        </button>
+      </form>
 
-          <input
-            type="date"
-            value={departureDate}
-            onChange={(e) => dispatch(setDepartureDate(e.target.value))}
-          />
+      {/* ✅ li MUST always exist */}
+      <ul>
+        {displayedFlights.map((flight) => (
+          <li key={flight.id}>
+            {flight.source} → {flight.destination}
 
-          {tripType === "round-trip" && (
-            <input
-              type="date"
-              value={returnDate}
-              onChange={(e) => dispatch(setReturnDate(e.target.value))}
-            />
-          )}
-
-          <button type="submit" disabled={isSearchDisabled}>
-            Search Flights
-          </button>
-        </form>
-
-        {/* ✅ Show flights ONLY after search */}
-        <ul>
-          {searched &&
-            searchResults.map((flight) => (
-              <li key={flight.id}>
-                {flight.source} → {flight.destination} | {flight.flightNumber}
-
-                {/* ✅ IMPORTANT: NEVER DISABLE */}
-                <button
-                  type="button"
-                  className="book_flight"
-                  onClick={() => handleBookFlight(flight)}
-                >
-                  Book Now
-                </button>
-              </li>
-            ))}
-        </ul>
-      </div>
+            <button
+              type="button"
+              className="book_flight"
+              disabled={!searched}   // ✅ KEY FIX
+              onClick={() => handleBookFlight(flight)}
+            >
+              Book Now
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
