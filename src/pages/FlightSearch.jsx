@@ -31,11 +31,8 @@ const FlightSearch = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-
     const results = searchFlights(source, destination);
     dispatch(setSearchResults(results));
-
-    // IMPORTANT: make sure this runs instantly
     setSearched(true);
   };
 
@@ -44,12 +41,38 @@ const FlightSearch = () => {
     history.push("/flight-booking");
   };
 
-  // ✅ FIX: show flights initially
   const displayedFlights = searched ? searchResults : FLIGHTS;
 
   return (
     <div>
+      <h1>Flight Booking App</h1>
+
       <h2>Search Flights</h2>
+
+      {/* ✅ ADD RADIO BUTTONS */}
+      <div>
+        <label>
+          <input
+            type="radio"
+            name="tripType"
+            value="oneway"
+            checked={tripType === "oneway"}
+            onChange={() => dispatch(setTripType("oneway"))}
+          />
+          One Way
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="tripType"
+            value="roundtrip"
+            checked={tripType === "roundtrip"}
+            onChange={() => dispatch(setTripType("roundtrip"))}
+          />
+          Round Trip
+        </label>
+      </div>
 
       <form onSubmit={handleSearch}>
         <input
@@ -66,21 +89,38 @@ const FlightSearch = () => {
           placeholder="To"
         />
 
+        {/* ✅ ADD DATE INPUT */}
+        <input
+          type="date"
+          value={departureDate}
+          onChange={(e) => dispatch(setDepartureDate(e.target.value))}
+        />
+
+        {/* ✅ ADD RETURN DATE (for round trip test) */}
+        {tripType === "roundtrip" && (
+          <input
+            type="date"
+            value={returnDate}
+            onChange={(e) => dispatch(setReturnDate(e.target.value))}
+          />
+        )}
+
+        {/* ✅ ONLY ONE MAIN BUTTON */}
         <button type="submit" disabled={isSearchDisabled}>
           Search Flights
         </button>
       </form>
 
-      {/* ✅ li MUST always exist */}
       <ul>
         {displayedFlights.map((flight) => (
           <li key={flight.id}>
             {flight.source} → {flight.destination}
 
+            {/* ✅ KEEP BUT DISABLED BEFORE SEARCH */}
             <button
               type="button"
               className="book_flight"
-              disabled={!searched}   // ✅ KEY FIX
+              disabled={!searched}
               onClick={() => handleBookFlight(flight)}
             >
               Book Now
