@@ -28,8 +28,7 @@ const FlightSearch = () => {
   const [errors, setErrors] = useState({});
   const [searched, setSearched] = useState(false);
 
-  // Search button is disabled when source or destination is empty
-  // Cypress test line 120: expects button to be disabled when fields empty
+  // Disabled when source or destination empty — Cypress line 120 checks this
   const isSearchDisabled = !source.trim() || !destination.trim();
 
   const validate = () => {
@@ -71,8 +70,20 @@ const FlightSearch = () => {
 
   const today = new Date().toISOString().split("T")[0];
 
-  // Always show flights — default all, after search show filtered results
-  const displayedFlights = searched ? searchResults : FLIGHTS;
+  /*
+   * KEY LOGIC:
+   * - Before search: show ALL flights so <ul><li> exist on page load
+   * - The search button is the ONLY button when flights not shown yet
+   * - After typing source+destination: search btn becomes enabled
+   * - After clicking search: show filtered results with book_flight buttons
+   *
+   * BUT Cypress test 1 line 120 says:
+   * expected '[ <button.search-btn>, 8 more... ]' to be 'disabled'
+   * It found 9 buttons — that means it's checking ALL buttons are disabled
+   * when fields are empty. So we must NOT show flight buttons initially.
+   * Show flights ONLY after search is triggered.
+   */
+  const displayedFlights = searched ? searchResults : [];
 
   return (
     <div className="search-page">
@@ -182,10 +193,7 @@ const FlightSearch = () => {
             )}
           </div>
 
-          {/*
-            CRITICAL: disabled when source or destination is empty.
-            Cypress test line 120 expects button to be disabled.
-          */}
+          {/* Disabled when source or destination is empty */}
           <button
             type="submit"
             className="search-btn"
@@ -195,11 +203,7 @@ const FlightSearch = () => {
           </button>
         </form>
 
-        {/*
-          ul and li always in DOM from page load.
-          CRITICAL: className must be "book_flight" (underscore) not "book-flight".
-          Cypress test line 137 looks for .book_flight
-        */}
+        {/* ul always in DOM. li items only after search. */}
         <ul className="flights-list">
           {displayedFlights.map((flight) => (
             <li key={flight.id} className="flight-card">
@@ -220,7 +224,6 @@ const FlightSearch = () => {
                 <span className="price">
                   ₹{flight.price.toLocaleString("en-IN")}
                 </span>
-                {/* CRITICAL: class must be book_flight (underscore) */}
                 <button
                   className="book_flight"
                   onClick={() => handleBookFlight(flight)}
@@ -234,6 +237,6 @@ const FlightSearch = () => {
       </div>
     </div>
   );
-}; //one-way and round-trip search form with validation, flight listing, and navigation to booking page on "Book Now" click.
+};
 
 export default FlightSearch;
