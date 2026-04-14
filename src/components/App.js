@@ -18,7 +18,7 @@ const App = () => {
             <Switch>
 
               {/* ✅ FIXED DEFAULT ROUTE */}
-              <Route exact path="/" component={FlightSearch} />
+              <Route exact path="/" component={Home} />
 
               <Route path="/flight-search" component={FlightSearch} />
               <Route path="/flight-booking" component={FlightBooking} />
