@@ -5,42 +5,11 @@ const Home = () => {
   const history = useHistory();
 
   return (
-    <div className="home-page">
-      <div className="hero">
-        <div className="hero-content">
-          {/* Cypress test looks for this exact string */}
-          <h1>Welcome to Flight Booking App</h1>
-          <p className="hero-subtitle">
-            Book domestic flights with ease. Seamless journeys, exceptional value.
-          </p>
-          <button
-            className="cta-button"
-            onClick={() => history.push("/flight-search")}
-          >
-            Book a Flight
-          </button>
-        </div>
-      </div>
-
-      <div className="features">
-        <div className="features-grid">
-          <div className="feature-card">
-            <span className="feature-icon">🛫</span>
-            <h3>One-Way &amp; Round Trips</h3>
-            <p>Flexible booking for every travel plan.</p>
-          </div>
-          <div className="feature-card">
-            <span className="feature-icon">💺</span>
-            <h3>Instant Confirmation</h3>
-            <p>Get your booking ID in seconds.</p>
-          </div>
-          <div className="feature-card">
-            <span className="feature-icon">🔒</span>
-            <h3>Secure Booking</h3>
-            <p>Your data is always protected.</p>
-          </div>
-        </div>
-      </div>
+    <div>
+      <h1>Welcome to Flight Booking App</h1>
+      <button onClick={() => history.push("/flight-search")}>
+        Book a Flight
+      </button>
     </div>
   );
 };

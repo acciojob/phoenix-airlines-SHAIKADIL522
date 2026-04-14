@@ -39,7 +39,7 @@ const flightSlice = createSlice({
       state.returnDate = action.payload;
     },
     setSearchResults(state, action) {
-      state.searchResults = action.payload;
+      state.searchResults = action.payload || [];
     },
     selectFlight(state, action) {
       state.selectedFlight = action.payload;

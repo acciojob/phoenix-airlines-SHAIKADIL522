@@ -15,36 +15,28 @@ const FlightBooking = () => {
     phone: "",
   });
 
-  const [errors, setErrors] = useState({});
-
-  if (!selectedFlight) {
-    history.push("/flight-search");
-    return null;
-  }
-
   const validate = () => {
-    const newErrors = {};
-
-    if (!form.name.trim()) newErrors.name = "Name required";
-    if (!form.email.trim()) newErrors.email = "Email required";
-    if (!form.phone.trim()) newErrors.phone = "Phone required";
-
-    return newErrors;
+    const errors = {};
+    if (!form.name.trim()) errors.name = true;
+    if (!form.email.trim()) errors.email = true;
+    if (!form.phone.trim()) errors.phone = true;
+    return errors;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const validationErrors = validate();
-    setErrors(validationErrors);
-
-    if (Object.keys(validationErrors).length > 0) return;
+    const errors = validate();
+    if (Object.keys(errors).length > 0) return;
 
     dispatch(setBookingDetails(form));
     dispatch(confirmBooking());
-
     history.push("/confirmation");
   };
+
+  if (!selectedFlight) {
+    return <div>No flight selected</div>;
+  }
 
   return (
     <div>
@@ -78,10 +70,7 @@ const FlightBooking = () => {
           }
         />
 
-        {/* ✅ IMPORTANT: class added for Cypress */}
-        <button type="submit" className="book_flight">
-          Book Now
-        </button>
+        <button type="submit">Book Now</button>
       </form>
     </div>
   );
