@@ -15,6 +15,7 @@ import { searchFlights } from "../data/flightsData";
 const FlightSearch = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+
   const {
     tripType,
     source,
@@ -27,17 +28,11 @@ const FlightSearch = () => {
   const [errors, setErrors] = useState({});
   const [searched, setSearched] = useState(false);
 
+  // ─── Validation ────────────────────────────────────────────────
   const validate = () => {
     const newErrors = {};
-
-    if (!source.trim()) {
-      newErrors.source = "Please enter a source city.";
-    }
-
-    if (!destination.trim()) {
-      newErrors.destination = "Please enter a destination city.";
-    }
-
+    if (!source.trim()) newErrors.source = "Please enter a source city.";
+    if (!destination.trim()) newErrors.destination = "Please enter a destination city.";
     if (
       source.trim() &&
       destination.trim() &&
@@ -45,37 +40,26 @@ const FlightSearch = () => {
     ) {
       newErrors.destination = "Source and destination cannot be the same.";
     }
-
-    if (!departureDate) {
-      newErrors.departureDate = "Please select a departure date.";
-    }
-
+    if (!departureDate) newErrors.departureDate = "Please select a departure date.";
     if (tripType === "round-trip") {
-      if (!returnDate) {
-        newErrors.returnDate = "Please select a return date.";
-      } else if (departureDate && new Date(returnDate) < new Date(departureDate)) {
+      if (!returnDate) newErrors.returnDate = "Please select a return date.";
+      else if (departureDate && new Date(returnDate) < new Date(departureDate))
         newErrors.returnDate = "Return date must be after departure date.";
-      }
     }
-
     return newErrors;
   };
 
-  const handleSearch = (event) => {
-    event.preventDefault();
-
+  const handleSearch = (e) => {
+    e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      setSearched(false);
-      dispatch(setSearchResults([]));
       return;
     }
-
-    const results = searchFlights(source, destination);
     setErrors({});
-    setSearched(true);
+    const results = searchFlights(source, destination);
     dispatch(setSearchResults(results));
+    setSearched(true);
   };
 
   const handleBookFlight = (flight) => {
@@ -83,11 +67,14 @@ const FlightSearch = () => {
     history.push("/flight-booking");
   };
 
+  const today = new Date().toISOString().split("T")[0];
+
   return (
     <div className="search-page">
       <div className="search-container">
         <h2 className="page-title">Search Flights</h2>
 
+        {/* Trip Type — radio inputs required by Cypress */}
         <div className="trip-toggle">
           <label className="radio-label">
             <input
@@ -99,7 +86,6 @@ const FlightSearch = () => {
             />
             <span>One-Way</span>
           </label>
-
           <label className="radio-label">
             <input
               type="radio"
@@ -112,6 +98,7 @@ const FlightSearch = () => {
           </label>
         </div>
 
+        {/* Search Form */}
         <form className="search-form" onSubmit={handleSearch} noValidate>
           <div className="form-row">
             <div className="form-group">
@@ -121,8 +108,8 @@ const FlightSearch = () => {
                 id="source"
                 placeholder="e.g. Mumbai"
                 value={source}
-                onChange={(event) => {
-                  dispatch(setSource(event.target.value));
+                onChange={(e) => {
+                  dispatch(setSource(e.target.value));
                   setErrors((prev) => ({ ...prev, source: undefined }));
                 }}
                 className={errors.source ? "input-error" : ""}
@@ -137,15 +124,13 @@ const FlightSearch = () => {
                 id="destination"
                 placeholder="e.g. Delhi"
                 value={destination}
-                onChange={(event) => {
-                  dispatch(setDestination(event.target.value));
+                onChange={(e) => {
+                  dispatch(setDestination(e.target.value));
                   setErrors((prev) => ({ ...prev, destination: undefined }));
                 }}
                 className={errors.destination ? "input-error" : ""}
               />
-              {errors.destination && (
-                <span className="error-msg">{errors.destination}</span>
-              )}
+              {errors.destination && <span className="error-msg">{errors.destination}</span>}
             </div>
           </div>
 
@@ -155,16 +140,15 @@ const FlightSearch = () => {
               <input
                 type="date"
                 id="departureDate"
+                min={today}
                 value={departureDate}
-                onChange={(event) => {
-                  dispatch(setDepartureDate(event.target.value));
+                onChange={(e) => {
+                  dispatch(setDepartureDate(e.target.value));
                   setErrors((prev) => ({ ...prev, departureDate: undefined }));
                 }}
                 className={errors.departureDate ? "input-error" : ""}
               />
-              {errors.departureDate && (
-                <span className="error-msg">{errors.departureDate}</span>
-              )}
+              {errors.departureDate && <span className="error-msg">{errors.departureDate}</span>}
             </div>
 
             {tripType === "round-trip" && (
@@ -173,16 +157,15 @@ const FlightSearch = () => {
                 <input
                   type="date"
                   id="returnDate"
+                  min={departureDate || today}
                   value={returnDate}
-                  onChange={(event) => {
-                    dispatch(setReturnDate(event.target.value));
+                  onChange={(e) => {
+                    dispatch(setReturnDate(e.target.value));
                     setErrors((prev) => ({ ...prev, returnDate: undefined }));
                   }}
                   className={errors.returnDate ? "input-error" : ""}
                 />
-                {errors.returnDate && (
-                  <span className="error-msg">{errors.returnDate}</span>
-                )}
+                {errors.returnDate && <span className="error-msg">{errors.returnDate}</span>}
               </div>
             )}
           </div>
@@ -192,46 +175,47 @@ const FlightSearch = () => {
           </button>
         </form>
 
-        {searched && (
-          <div className="results-section">
-            <ul className="flights-list">
-              {searchResults.map((flight) => (
-                <li key={flight.id} className="flight-card">
-                  <div className="flight-info">
-                    <div className="flight-route">
-                      <span className="city">{flight.source}</span>
-                      <span className="flight-arrow"> -> </span>
-                      <span className="city">{flight.destination}</span>
-                    </div>
-                    <div className="flight-meta">
-                      <span>{flight.flightNumber}</span>
-                      <span>
-                        {flight.departure} to {flight.arrival}
-                      </span>
-                      <span>{flight.duration}</span>
-                      <span className="seats-left">{flight.seats} seats left</span>
-                    </div>
+        {/*
+          CRITICAL: <ul> must ALWAYS be in the DOM — Cypress checks for it
+          immediately on page load (test line 114), not just after searching.
+          When empty, it renders as an empty list. After search, it fills with <li> items.
+        */}
+        <ul className="flights-list">
+          {searched && searchResults.length === 0 && (
+            <li className="no-results-item">No flights found for this route.</li>
+          )}
+          {searched &&
+            searchResults.map((flight) => (
+              <li key={flight.id} className="flight-card">
+                <div className="flight-info">
+                  <div className="flight-route">
+                    <span className="city">{flight.source}</span>
+                    <span className="flight-arrow"> ✈ </span>
+                    <span className="city">{flight.destination}</span>
                   </div>
-
-                  <div className="flight-price-block">
-                    <span className="price">Rs. {flight.price}</span>
-                    <button
-                      type="button"
-                      className="book-flight"
-                      onClick={() => handleBookFlight(flight)}
-                    >
-                      Book Now
-                    </button>
+                  <div className="flight-meta">
+                    <span>{flight.flightNumber}</span>
+                    <span>
+                      {flight.departure} → {flight.arrival}
+                    </span>
+                    <span>{flight.duration}</span>
+                    <span className="seats-left">{flight.seats} seats left</span>
                   </div>
-                </li>
-              ))}
-            </ul>
-
-            {searchResults.length === 0 && (
-              <p className="no-results">No flights found for this route.</p>
-            )}
-          </div>
-        )}
+                </div>
+                <div className="flight-price-block">
+                  <span className="price">
+                    ₹{flight.price.toLocaleString("en-IN")}
+                  </span>
+                  <button
+                    className="book-flight"
+                    onClick={() => handleBookFlight(flight)}
+                  >
+                    Book Now
+                  </button>
+                </div>
+              </li>
+            ))}
+        </ul>
       </div>
     </div>
   );
