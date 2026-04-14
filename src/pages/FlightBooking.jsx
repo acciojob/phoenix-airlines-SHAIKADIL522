@@ -210,6 +210,6 @@ const FlightBooking = () => {
       </div>
     </div>
   );
-};
+};   //<span class="hljs-comment">/* Note: For simplicity, this form assumes 1 passenger. In a real app, you'd want to allow multiple passengers and collect their details as well. */</span>
 
 export default FlightBooking;

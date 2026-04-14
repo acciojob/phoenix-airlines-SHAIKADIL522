@@ -234,6 +234,6 @@ const FlightSearch = () => {
       </div>
     </div>
   );
-};
+}; //one-way and round-trip search form with validation, flight listing, and navigation to booking page on "Book Now" click.
 
 export default FlightSearch;
