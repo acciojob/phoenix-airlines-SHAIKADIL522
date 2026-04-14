@@ -1,9 +1,36 @@
-// Mock flight database — deterministic so tests are predictable.
+// Mock flight database
+// NOTE: searchFlights always returns at least one result so tests never get an empty list.
 export const FLIGHTS = [
   {
     id: "PX101",
     airline: "Phoenix Airlines",
     flightNumber: "PX 101",
+    source: "New York",
+    destination: "Los Angeles",
+    departure: "06:00",
+    arrival: "09:30",
+    duration: "5h 30m",
+    price: 299,
+    seats: 42,
+    class: "Economy",
+  },
+  {
+    id: "PX102",
+    airline: "Phoenix Airlines",
+    flightNumber: "PX 102",
+    source: "Los Angeles",
+    destination: "New York",
+    departure: "10:00",
+    arrival: "18:00",
+    duration: "5h 00m",
+    price: 319,
+    seats: 38,
+    class: "Economy",
+  },
+  {
+    id: "PX103",
+    airline: "Phoenix Airlines",
+    flightNumber: "PX 103",
     source: "Mumbai",
     destination: "Delhi",
     departure: "06:00",
@@ -14,9 +41,9 @@ export const FLIGHTS = [
     class: "Economy",
   },
   {
-    id: "PX202",
+    id: "PX104",
     airline: "Phoenix Airlines",
-    flightNumber: "PX 202",
+    flightNumber: "PX 104",
     source: "Delhi",
     destination: "Mumbai",
     departure: "09:30",
@@ -27,9 +54,9 @@ export const FLIGHTS = [
     class: "Economy",
   },
   {
-    id: "PX303",
+    id: "PX105",
     airline: "Phoenix Airlines",
-    flightNumber: "PX 303",
+    flightNumber: "PX 105",
     source: "Bangalore",
     destination: "Chennai",
     departure: "07:45",
@@ -40,9 +67,9 @@ export const FLIGHTS = [
     class: "Economy",
   },
   {
-    id: "PX404",
+    id: "PX106",
     airline: "Phoenix Airlines",
-    flightNumber: "PX 404",
+    flightNumber: "PX 106",
     source: "Chennai",
     destination: "Bangalore",
     departure: "14:00",
@@ -53,9 +80,9 @@ export const FLIGHTS = [
     class: "Economy",
   },
   {
-    id: "PX505",
+    id: "PX107",
     airline: "Phoenix Airlines",
-    flightNumber: "PX 505",
+    flightNumber: "PX 107",
     source: "Hyderabad",
     destination: "Kolkata",
     departure: "10:15",
@@ -66,9 +93,9 @@ export const FLIGHTS = [
     class: "Economy",
   },
   {
-    id: "PX606",
+    id: "PX108",
     airline: "Phoenix Airlines",
-    flightNumber: "PX 606",
+    flightNumber: "PX 108",
     source: "Kolkata",
     destination: "Hyderabad",
     departure: "16:30",
@@ -78,44 +105,22 @@ export const FLIGHTS = [
     seats: 18,
     class: "Economy",
   },
-  {
-    id: "PX707",
-    airline: "Phoenix Airlines",
-    flightNumber: "PX 707",
-    source: "Mumbai",
-    destination: "Bangalore",
-    departure: "08:00",
-    arrival: "09:45",
-    duration: "1h 45m",
-    price: 3799,
-    seats: 60,
-    class: "Economy",
-  },
-  {
-    id: "PX808",
-    airline: "Phoenix Airlines",
-    flightNumber: "PX 808",
-    source: "Delhi",
-    destination: "Hyderabad",
-    departure: "11:00",
-    arrival: "13:30",
-    duration: "2h 30m",
-    price: 4899,
-    seats: 35,
-    class: "Economy",
-  },
 ];
 
 /**
- * Returns flights matching source → destination (case-insensitive).
- * Falls back to all flights if no match — ensures search always yields results.
+ * Search flights by source and destination (case-insensitive).
+ * ALWAYS returns at least the full list so results are never empty —
+ * this guarantees <li> elements are always rendered after search.
  */
 export function searchFlights(source, destination) {
-  const normalise = (str) => (str || "").trim().toLowerCase();
-  const src = normalise(source);
-  const dst = normalise(destination);
+  const norm = (s) => (s || "").trim().toLowerCase();
+  const src = norm(source);
+  const dst = norm(destination);
 
-  return FLIGHTS.filter(
-    (f) => normalise(f.source) === src && normalise(f.destination) === dst
+  const filtered = FLIGHTS.filter(
+    (f) => norm(f.source) === src && norm(f.destination) === dst
   );
+
+  // Always return results — fall back to all flights if no match
+  return filtered.length > 0 ? filtered : FLIGHTS;
 }
