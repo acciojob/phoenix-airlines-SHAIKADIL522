@@ -120,11 +120,10 @@ const FlightSearch = () => {
             <button
               type="button"
               className="book_flight"
-              disabled={!searched}
-              onClick={() => handleBookFlight(flight)}
+             onClick={() => handleBookFlight(flight)}
             >
-              Book Now
-            </button>
+            Book Now
+</button>
           </li>
         ))}
       </ul>

@@ -15,6 +15,7 @@ const FlightBooking = () => {
     phone: "",
   });
 
+  const [errors, setErrors] = useState({});
   const validate = () => {
   const errors = {};
 
@@ -25,15 +26,19 @@ const FlightBooking = () => {
   return errors;
 };
   const handleSubmit = (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const errors = validate();
-    if (Object.keys(errors).length > 0) return;
+  const validationErrors = validate();
 
-    dispatch(setBookingDetails(form));
-    dispatch(confirmBooking());
-    history.push("/confirmation");
-  };
+  // ✅ SET ERRORS HERE
+  setErrors(validationErrors);
+
+  if (Object.keys(validationErrors).length > 0) return;
+
+  dispatch(setBookingDetails(form));
+  dispatch(confirmBooking());
+  history.push("/confirmation");
+};
 
   if (!selectedFlight) {
     return <div>No flight selected</div>;
