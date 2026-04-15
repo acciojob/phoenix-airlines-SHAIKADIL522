@@ -1,18 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  tripType: "oneway",        // "one-way" | "round-trip"
+  tripType: "one-way",
   source: "",
   destination: "",
   departureDate: "",
   returnDate: "",
   searchResults: [],
   selectedFlight: null,
-  booking: {
-    name: "",
-    email: "",
-    phone: "",
-  },
+  booking: { name: "", email: "", phone: "" },
   confirmation: null,
 };
 
@@ -22,28 +18,14 @@ const flightSlice = createSlice({
   reducers: {
     setTripType(state, action) {
       state.tripType = action.payload;
-      if (action.payload === "oneway") {
-        state.returnDate = "";
-      }
+      if (action.payload === "one-way") state.returnDate = "";
     },
-    setSource(state, action) {
-      state.source = action.payload;
-    },
-    setDestination(state, action) {
-      state.destination = action.payload;
-    },
-    setDepartureDate(state, action) {
-      state.departureDate = action.payload;
-    },
-    setReturnDate(state, action) {
-      state.returnDate = action.payload;
-    },
-    setSearchResults(state, action) {
-      state.searchResults = action.payload || [];
-    },
-    selectFlight(state, action) {
-      state.selectedFlight = action.payload;
-    },
+    setSource(state, action) { state.source = action.payload; },
+    setDestination(state, action) { state.destination = action.payload; },
+    setDepartureDate(state, action) { state.departureDate = action.payload; },
+    setReturnDate(state, action) { state.returnDate = action.payload; },
+    setSearchResults(state, action) { state.searchResults = action.payload; },
+    selectFlight(state, action) { state.selectedFlight = action.payload; },
     setBookingDetails(state, action) {
       state.booking = { ...state.booking, ...action.payload };
     },
@@ -60,23 +42,14 @@ const flightSlice = createSlice({
         bookedAt: new Date().toISOString(),
       };
     },
-    resetBooking(state) {
-      return { ...initialState };
-    },
+    resetBooking() { return { ...initialState }; },
   },
 });
 
 export const {
-  setTripType,
-  setSource,
-  setDestination,
-  setDepartureDate,
-  setReturnDate,
-  setSearchResults,
-  selectFlight,
-  setBookingDetails,
-  confirmBooking,
-  resetBooking,
+  setTripType, setSource, setDestination, setDepartureDate,
+  setReturnDate, setSearchResults, selectFlight,
+  setBookingDetails, confirmBooking, resetBooking,
 } = flightSlice.actions;
 
 export default flightSlice.reducer;
