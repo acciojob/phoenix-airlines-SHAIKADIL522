@@ -8,6 +8,7 @@ import FlightSearch from "../pages/FlightSearch";
 import FlightBooking from "../pages/FlightBooking";
 import Confirmation from "../pages/Confirmation";
 import "./../styles/App.css";
+import { applyMiddleware } from "@reduxjs/toolkit";
 
 const App = () => {
   return (
@@ -36,4 +37,4 @@ const App = () => {
   );
 };
 
-export default Home;
+export default App;
