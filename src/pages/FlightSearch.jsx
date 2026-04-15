@@ -83,6 +83,6 @@ const FlightSearch = () => {
       ))}
     </div>
   );
-};
+};  // ✅ FIXED: define this function
 
 export default FlightSearch;
