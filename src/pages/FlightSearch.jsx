@@ -142,14 +142,14 @@ const FlightSearch = () => {
               </div>
               <div className="flight-price-block">
                 <span className="price">₹{flight.price.toLocaleString("en-IN")}</span>
-                <button
-                  type="button"
-                  className="book_flight"
-                  disabled={!searched}
-                  onClick={() => handleBookFlight(flight)}
-                >
-                  Book Now
-                </button>
+              <button
+               type="button"
+               className="book_flight"
+               disabled={!searched}
+               onClick={() => handleBookFlight(flight)}
+              >
+               Book Now
+              </button>
               </div>
             </li>
           ))}

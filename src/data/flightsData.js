@@ -11,8 +11,13 @@ export const FLIGHTS = [
 
 export function searchFlights(source, destination) {
   const norm = (s) => (s || "").trim().toLowerCase();
-  const filtered = FLIGHTS.filter(
-    (f) => norm(f.source) === norm(source) && norm(f.destination) === norm(destination)
-  );
-  return filtered.length > 0 ? filtered : FLIGHTS;
+
+  const filtered = FLIGHTS.filter((f) => {
+    return (
+      norm(f.source).includes(norm(source)) &&
+      norm(f.destination).includes(norm(destination))
+    );
+  });
+
+  return filtered;
 }
