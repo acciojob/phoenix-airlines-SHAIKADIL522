@@ -1,133 +1,106 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
 import {
-  setTripType,
   setSource,
   setDestination,
   setDepartureDate,
   setReturnDate,
+  setTripType,
   setSearchResults,
   selectFlight,
 } from "../store/flightSlice";
-import { searchFlights, FLIGHTS } from "../data/flightsData";
+import { searchFlights } from "../data/flightsData";
+import { useHistory } from "react-router-dom";
 
 const FlightSearch = () => {
   const dispatch = useDispatch();
   const history = useHistory();
 
   const {
-    tripType,
     source,
     destination,
     departureDate,
     returnDate,
+    tripType,
     searchResults,
+    selectedFlight,
   } = useSelector((state) => state.flights);
 
-  const [searched, setSearched] = useState(false);
-
-  const isSearchDisabled = !source.trim() || !destination.trim();
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-
-   const results = searchFlights(source, destination, tripType);
+  const handleSearch = () => {
+    const results = searchFlights(source, destination);
     dispatch(setSearchResults(results));
-
-    setSearched(true); // ✅ IMPORTANT
   };
 
-  const handleBookFlight = (flight) => {
-    dispatch(selectFlight(flight));
-    history.push("/flight-booking");
+  const handleBook = () => {
+    if (!selectedFlight) return;
+    history.push("/booking");
   };
-
-  const displayedFlights = searched ? searchResults : FLIGHTS;
 
   return (
     <div>
-      <h1>Flight Booking App</h1>
-
       <h2>Search Flights</h2>
 
-      {/* ✅ FIXED VALUES */}
-      <div>
-        <label>
-          <input
-            type="radio"
-            name="tripType"
-            value="one-way"
-            checked={tripType === "one-way"}
-            onChange={() => dispatch(setTripType("one-way"))}
-          />
-          One Way
-        </label>
+      <select
+        value={tripType}
+        onChange={(e) => dispatch(setTripType(e.target.value))}
+      >
+        <option value="oneway">One Way</option>
+        <option value="roundtrip">Round Trip</option>
+      </select>
 
-        <label>
-          <input
-            type="radio"
-            name="tripType"
-            value="round-trip"
-            checked={tripType === "round-trip"}
-            onChange={() => dispatch(setTripType("round-trip"))}
-          />
-          Round Trip
-        </label>
-      </div>
+      <input
+        type="text"
+        placeholder="Source"
+        value={source}
+        onChange={(e) => dispatch(setSource(e.target.value))}
+      />
 
-      <form onSubmit={handleSearch}>
-        <input
-          type="text"
-          value={source}
-          onChange={(e) => dispatch(setSource(e.target.value))}
-          placeholder="From"
-        />
+      <input
+        type="text"
+        placeholder="Destination"
+        value={destination}
+        onChange={(e) => dispatch(setDestination(e.target.value))}
+      />
 
-        <input
-          type="text"
-          value={destination}
-          onChange={(e) => dispatch(setDestination(e.target.value))}
-          placeholder="To"
-        />
+      <input
+        type="date"
+        value={departureDate}
+        onChange={(e) => dispatch(setDepartureDate(e.target.value))}
+      />
 
+      {tripType === "roundtrip" && (
         <input
           type="date"
-          value={departureDate}
-          onChange={(e) => dispatch(setDepartureDate(e.target.value))}
+          value={returnDate}
+          onChange={(e) => dispatch(setReturnDate(e.target.value))}
         />
+      )}
 
-        {/* ✅ FIXED CONDITION */}
-        {tripType === "round-trip" && (
-          <input
-            type="date"
-            value={returnDate}
-            onChange={(e) => dispatch(setReturnDate(e.target.value))}
-          />
-        )}
+      <button onClick={handleSearch}>Search</button>
 
-        <button type="submit" disabled={isSearchDisabled}>
-          Search Flights
-        </button>
-      </form>
+      <div>
+        {searchResults.length === 0 && <p>No Flights Available</p>}
 
-      <ul>
-        {displayedFlights.map((flight) => (
-          <li key={flight.id}>
-            {flight.source} → {flight.destination}
-
-            {/* ✅ FINAL FIX */}
-            <button
-              type="button"
-              className="book_flight"
-              disabled={!searched}   // 🔥 MOST IMPORTANT LINE
-              onClick={() => handleBookFlight(flight)}
-            >
-              Book Now
+        {searchResults.map((flight) => (
+          <div key={flight.id}>
+            <p>
+              {flight.source} → {flight.destination}
+            </p>
+            <button onClick={() => dispatch(selectFlight(flight))}>
+              Select
             </button>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
+
+      {/* ✅ IMPORTANT FIX */}
+      <button
+        type="button"
+        className="book_flight"
+        onClick={handleBook}
+      >
+        Book Now
+      </button>
     </div>
   );
 };
