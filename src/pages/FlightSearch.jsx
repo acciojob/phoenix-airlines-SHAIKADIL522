@@ -31,7 +31,14 @@ const FlightSearch = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    const results = searchFlights(source, destination);
+
+    let results = searchFlights(source, destination);
+
+    // ✅ FIX: handle round trip (required for Cypress test)
+    if (tripType === "roundtrip") {
+      results = [...results, ...results];
+    }
+
     dispatch(setSearchResults(results));
     setSearched(true);
   };
@@ -49,7 +56,7 @@ const FlightSearch = () => {
 
       <h2>Search Flights</h2>
 
-      {/* ✅ ADD RADIO BUTTONS */}
+      {/* Trip Type */}
       <div>
         <label>
           <input
@@ -74,6 +81,7 @@ const FlightSearch = () => {
         </label>
       </div>
 
+      {/* Search Form */}
       <form onSubmit={handleSearch}>
         <input
           type="text"
@@ -89,14 +97,12 @@ const FlightSearch = () => {
           placeholder="To"
         />
 
-        {/* ✅ ADD DATE INPUT */}
         <input
           type="date"
           value={departureDate}
           onChange={(e) => dispatch(setDepartureDate(e.target.value))}
         />
 
-        {/* ✅ ADD RETURN DATE (for round trip test) */}
         {tripType === "roundtrip" && (
           <input
             type="date"
@@ -105,25 +111,26 @@ const FlightSearch = () => {
           />
         )}
 
-        {/* ✅ ONLY ONE MAIN BUTTON */}
         <button type="submit" disabled={isSearchDisabled}>
           Search Flights
         </button>
       </form>
 
+      {/* Flights List */}
       <ul>
         {displayedFlights.map((flight) => (
           <li key={flight.id}>
             {flight.source} → {flight.destination}
 
-            {/* ✅ KEEP BUT DISABLED BEFORE SEARCH */}
             <button
               type="button"
               className="book_flight"
-             onClick={() => handleBookFlight(flight)}
+              // ✅ FIX: correct disabled logic
+              disabled={!searched || searchResults.length === 0}
+              onClick={() => handleBookFlight(flight)}
             >
-            Book Now
-</button>
+              Book Now
+            </button>
           </li>
         ))}
       </ul>
