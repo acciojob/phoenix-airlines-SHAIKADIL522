@@ -15,17 +15,17 @@ const FlightBooking = () => {
     phone: "",
   });
 
-  const [errors, setErrors] = useState({});
-  const [errorMsg, setErrorMsg] = useState(""); // ✅ REQUIRED
+  const [errorMsg, setErrorMsg] = useState("");
 
   const validate = () => {
-    const errors = {};
-
-    if (!form.name.trim()) errors.name = "Name required";
-    if (!form.email.trim()) errors.email = "Email required";
-    if (!form.phone.trim()) errors.phone = "Phone required";
-
-    return errors;
+    if (
+      !form.name.trim() ||
+      !form.email.trim() ||
+      !form.phone.trim()
+    ) {
+      return { general: "All Fields are mandatory" };
+    }
+    return {};
   };
 
   const handleSubmit = (e) => {
@@ -33,15 +33,12 @@ const FlightBooking = () => {
 
     const validationErrors = validate();
 
-    setErrors(validationErrors);
-
-    // ✅ REQUIRED FOR TEST
-    if (Object.keys(validationErrors).length > 0) {
-      setErrorMsg("All Fields are mandatory");
+    if (validationErrors.general) {
+      setErrorMsg(validationErrors.general);
       return;
     }
 
-    setErrorMsg(""); // clear error if valid
+    setErrorMsg("");
 
     dispatch(setBookingDetails(form));
     dispatch(confirmBooking());
@@ -57,7 +54,6 @@ const FlightBooking = () => {
       <h2>Complete Booking</h2>
 
       <form onSubmit={handleSubmit}>
-        {/* ✅ GLOBAL ERROR MESSAGE */}
         {errorMsg && <p>{errorMsg}</p>}
 
         <input
@@ -68,7 +64,6 @@ const FlightBooking = () => {
             setForm({ ...form, name: e.target.value })
           }
         />
-        {errors.name && <p>{errors.name}</p>}
 
         <input
           type="text"
@@ -78,7 +73,6 @@ const FlightBooking = () => {
             setForm({ ...form, email: e.target.value })
           }
         />
-        {errors.email && <p>{errors.email}</p>}
 
         <input
           type="text"
@@ -88,7 +82,6 @@ const FlightBooking = () => {
             setForm({ ...form, phone: e.target.value })
           }
         />
-        {errors.phone && <p>{errors.phone}</p>}
 
         <button type="submit" className="book_flight">
           Book Now

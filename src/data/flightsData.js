@@ -1,6 +1,4 @@
-// Flight data using EXACT city names the Cypress tests search for:
-// Test 1 searches: "Bengaluru" (not "Bangalore")
-// Test 2,3 searches: "New Delhi" (not "Delhi")
+// Flight data using EXACT city names the Cypress tests search for
 
 export const FLIGHTS = [
   {
@@ -110,15 +108,27 @@ export const FLIGHTS = [
 ];
 
 /**
- * Search flights by source → destination (case-insensitive).
- * Returns only matching routes.
+ * Search flights (supports BOTH one-way and round-trip)
  */
-export function searchFlights(source, destination) {
+export function searchFlights(source, destination, tripType = "one-way") {
   const norm = (s) => (s || "").trim().toLowerCase();
+
   const src = norm(source);
   const dst = norm(destination);
 
-  return FLIGHTS.filter(
+  // One-way flights
+  const onward = FLIGHTS.filter(
     (f) => norm(f.source) === src && norm(f.destination) === dst
   );
+
+  // Round-trip: also include return flights
+  if (tripType === "round-trip") {
+    const returnFlights = FLIGHTS.filter(
+      (f) => norm(f.source) === dst && norm(f.destination) === src
+    );
+
+    return [...onward, ...returnFlights];
+  }
+
+  return onward;
 }

@@ -32,15 +32,10 @@ const FlightSearch = () => {
   const handleSearch = (e) => {
     e.preventDefault();
 
-    let results = searchFlights(source, destination);
-
-    // ✅ FIX: handle round trip (required for Cypress test)
-    if (tripType === "roundtrip") {
-      results = [...results, ...results];
-    }
-
+   const results = searchFlights(source, destination, tripType);
     dispatch(setSearchResults(results));
-    setSearched(true);
+
+    setSearched(true); // ✅ IMPORTANT
   };
 
   const handleBookFlight = (flight) => {
@@ -56,15 +51,15 @@ const FlightSearch = () => {
 
       <h2>Search Flights</h2>
 
-      {/* Trip Type */}
+      {/* ✅ FIXED VALUES */}
       <div>
         <label>
           <input
             type="radio"
             name="tripType"
-            value="oneway"
-            checked={tripType === "oneway"}
-            onChange={() => dispatch(setTripType("oneway"))}
+            value="one-way"
+            checked={tripType === "one-way"}
+            onChange={() => dispatch(setTripType("one-way"))}
           />
           One Way
         </label>
@@ -73,15 +68,14 @@ const FlightSearch = () => {
           <input
             type="radio"
             name="tripType"
-            value="roundtrip"
-            checked={tripType === "roundtrip"}
-            onChange={() => dispatch(setTripType("roundtrip"))}
+            value="round-trip"
+            checked={tripType === "round-trip"}
+            onChange={() => dispatch(setTripType("round-trip"))}
           />
           Round Trip
         </label>
       </div>
 
-      {/* Search Form */}
       <form onSubmit={handleSearch}>
         <input
           type="text"
@@ -103,7 +97,8 @@ const FlightSearch = () => {
           onChange={(e) => dispatch(setDepartureDate(e.target.value))}
         />
 
-        {tripType === "roundtrip" && (
+        {/* ✅ FIXED CONDITION */}
+        {tripType === "round-trip" && (
           <input
             type="date"
             value={returnDate}
@@ -116,17 +111,16 @@ const FlightSearch = () => {
         </button>
       </form>
 
-      {/* Flights List */}
       <ul>
         {displayedFlights.map((flight) => (
           <li key={flight.id}>
             {flight.source} → {flight.destination}
 
+            {/* ✅ FINAL FIX */}
             <button
               type="button"
               className="book_flight"
-              // ✅ FIX: correct disabled logic
-              disabled={!searched || searchResults.length === 0}
+              disabled={!searched}   // 🔥 MOST IMPORTANT LINE
               onClick={() => handleBookFlight(flight)}
             >
               Book Now

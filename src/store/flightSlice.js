@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  tripType: "one-way",        // "one-way" | "round-trip"
+  tripType: "oneway",        // "one-way" | "round-trip"
   source: "",
   destination: "",
   departureDate: "",
@@ -22,7 +22,7 @@ const flightSlice = createSlice({
   reducers: {
     setTripType(state, action) {
       state.tripType = action.payload;
-      if (action.payload === "one-way") {
+      if (action.payload === "oneway") {
         state.returnDate = "";
       }
     },
