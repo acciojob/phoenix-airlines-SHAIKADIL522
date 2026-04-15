@@ -3,6 +3,7 @@ import { Provider } from "react-redux";
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import store from "../store/store";
 import Navbar from "./Navbar";
+import Home from "../pages/Home";
 import FlightSearch from "../pages/FlightSearch";
 import FlightBooking from "../pages/FlightBooking";
 import Confirmation from "../pages/Confirmation";
@@ -35,4 +36,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Home;
