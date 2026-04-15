@@ -19,21 +19,25 @@ const FlightSearch = () => {
   // Disabled when source or destination is empty — Cypress line 120
   const isSearchDisabled = !source.trim() || !destination.trim();
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    const newErrors = {};
-    if (!source.trim()) newErrors.source = "Please enter source.";
-    if (!destination.trim()) newErrors.destination = "Please enter destination.";
-    if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
-    setErrors({});
-    dispatch(setSearchResults(searchFlights(source, destination)));
-    setSearched(true);
-  };
+ const handleSearch = (e) => {
+  e.preventDefault();
 
-  const handleBookFlight = (flight) => {
-    dispatch(selectFlight(flight));
-    history.push("/flight-booking");
-  };
+  const newErrors = {};
+
+  if (!source.trim()) newErrors.source = "Please enter source.";
+  if (!destination.trim()) newErrors.destination = "Please enter destination.";
+
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+    return;
+  }
+
+  setErrors({});
+
+  dispatch(setSearchResults(searchFlights(source, destination)));
+
+  setSearched(true); // ✅ THIS LINE MUST BE HERE
+};
 
   const today = new Date().toISOString().split("T")[0];
   // Always show FLIGHTS so <ul><li> exist on page load (Cypress line 114-115)
@@ -142,14 +146,13 @@ const FlightSearch = () => {
               </div>
               <div className="flight-price-block">
                 <span className="price">₹{flight.price.toLocaleString("en-IN")}</span>
-              <button
-               type="button"
-               className="book_flight"
-               disabled={!searched}
-               onClick={() => handleBookFlight(flight)}
-              >
-               Book Now
-              </button>
+                <button
+                 type="button"
+                 className="book_flight"
+                 onClick={() => handleBookFlight(flight)}
+                  >
+                 Book Now
+                </button>
               </div>
             </li>
           ))}
